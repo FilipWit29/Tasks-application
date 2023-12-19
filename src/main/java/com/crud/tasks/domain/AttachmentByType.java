@@ -6,5 +6,5 @@ import java.util.List;
 
 @Data
 public class AttachmentByType {
-    private List<Trello> trello;
+    private Trello trello;
 }
