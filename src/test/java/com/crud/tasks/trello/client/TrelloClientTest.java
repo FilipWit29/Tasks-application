@@ -10,12 +10,14 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.client.RestTemplate;
-import org.w3c.dom.stylesheets.LinkStyle;
+
 
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+
 import java.util.List;
+
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
@@ -34,7 +36,6 @@ class TrelloClientTest {
     void shouldFetchTrelloBoards() throws URISyntaxException {
         //Given
         when(trelloConfig.getTrelloApiEndpoint()).thenReturn("http://test.com");
-        ;
         when(trelloConfig.getTrelloAppKey()).thenReturn("test");
         when(trelloConfig.getTrelloToken()).thenReturn("test");
         when(trelloConfig.getTrelloUsername()).thenReturn("test");
@@ -82,5 +83,26 @@ class TrelloClientTest {
         assertEquals("1", newCard.getId());
         assertEquals("test task", newCard.getName());
         assertEquals("http://test.com", newCard.getShortUrl());
+    }
+
+    @Test
+    void shouldReturnEmptyList() throws URISyntaxException {
+        //Given
+        when(trelloConfig.getTrelloApiEndpoint()).thenReturn("http://test.com");
+        when(trelloConfig.getTrelloAppKey()).thenReturn("test");
+        when(trelloConfig.getTrelloToken()).thenReturn("test");
+        when(trelloConfig.getTrelloUsername()).thenReturn("test");
+
+        TrelloBoardDto[] trelloBoards = new TrelloBoardDto[1];
+        trelloBoards[0] = new TrelloBoardDto("test_id", "Kodilla", new ArrayList<>());
+
+        URI uri = new URI("http://test.com/members/test/boards?key=test&token=test&fields=name,id&lists=all");
+
+        when(restTemplate.getForObject(uri,TrelloBoardDto[].class)).thenReturn(null);
+        //When
+        List<TrelloBoardDto> allTrelloBoards = trelloClient.getTrelloBoards();
+
+        //Then
+        assertEquals(0,allTrelloBoards.size());
     }
 }
