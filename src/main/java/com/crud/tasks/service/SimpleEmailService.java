@@ -19,23 +19,15 @@ public class SimpleEmailService {
 
     public void send(final Mail mail) {
         log.info("Starting email preparation...");
-        if (Optional.ofNullable(mail.getToCc()).isPresent()) {
-            try {
-                SimpleMailMessage mailMessage = createMailMessage(mail);
-                javaMailSender.send(mailMessage);
-                log.info("Email has been sent.");
-            } catch (MailException e) {
-                log.error("Failed to process email sending: " + e.getMessage(), e);
-            }
-        } else {
-            try {
-                SimpleMailMessage mailMessage = createMailMessage(mail);
-                javaMailSender.send(mailMessage);
-                log.info("Email has been sent.");
-            } catch (MailException e) {
-                log.error("Failed to process email sending: " + e.getMessage(), e);
-            }
+
+        try {
+            SimpleMailMessage mailMessage = createMailMessage(mail);
+            javaMailSender.send(mailMessage);
+            log.info("Email has been sent.");
+        } catch (MailException e) {
+            log.error("Failed to process email sending: " + e.getMessage(), e);
         }
+
     }
 
     private SimpleMailMessage createMailMessage(final Mail mail) {
@@ -43,7 +35,9 @@ public class SimpleEmailService {
         mailMessage.setTo(mail.getMailTo());
         mailMessage.setSubject(mail.getSubject());
         mailMessage.setText(mail.getMessage());
-        mailMessage.setCc(mail.getToCc());
+        if (mail.getToCc()!= null) {
+            mailMessage.setCc(mail.getToCc());
+        }
         return mailMessage;
     }
 
